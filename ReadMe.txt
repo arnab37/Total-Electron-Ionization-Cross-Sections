@@ -1,17 +1,8 @@
-gregnet.mat is a previously trained object. 
-
-396 experimental data (i.e., total electron ionization cross section ratios at 70 or 75 eV w.r.t. n-hexane) is used to 
-train a neural network model with 10 perceptrons. The training was performed for 500 times by varying the training
-subdataset. Group and atom descriptors are sufficient to describe the structure of the molecule in this case.
-
-The predcited result observed to lie within less than 10% of the experimental data.
-
-Once we obtain the cross section ratio (1st column of TEICS70_out matrix), we need to multiply it with 
-linear calibartion factor (in response/mol) of n-hexane to obtain the linear calibration factor of the compound.
-
-A point to note that the linear calibartion factor depends on the dectector saturation. 
-High amount of n-hexane injection leads to lower the calibartion factor due to detector saturation.
-Thus, the final calibration factor of the compound will be applicalbe to that mole range where the n-hexane
-is calibarted.
-
-
+How to use the MATLAB code for the prediction of total electron ionization for the compounds.
+There are a few files that are needed to obtain the total electron ionization cross sections of new compounds. The descriptions of these files as follows:
+Descriptor_input_formats.xlsx -- This Excel file can be used to compose the input descriptors of a compound or of multiple compounds. The first column of the file is the name of the compound. This column is useful to track down a descriptor row and to understand the descriptors. After that there are 100 columns for the descriptors: Group, atom, and other lumped descriptors. The name of each descriptor and an explanation are written on the top of the column.  One can obtain these descriptors after looking into the molecular structure of a compound. 
+For the ring strain, the ring-strain tables from Benson, Thermochemical Kinetics, 2nd Ed. (Wiley, 1976) are consulted. A value is assigned after observing the closest ring structure from those tables. 
+Rows 4 to 18 are example compounds that can be used to test the code. Rows 19 to 414 are the 396 compounds in the database.
+Make_a_txt_file_after_copying_the_descriptors.txt -- Once the information is prepared with the previous Excel file, the descriptor columns and rows are copied. For example, in the current case, we have cut and pasted the C4 to CX18 cells from the Excel file into a text file with this name.
+Use_this_code_to_get_TEICS_at_70_75eV.m -- This file is the MATLAB code, shown below, which uses the previous txt file as the input. The other input file is BoseWestmorelandNet.mat, which contains the ANN model’s parameters obtained after training the neural net model for 500 times. When the MATLAB code gets the inputs of the descriptors, it uses BoseWestmorelandNet.mat to obtain 500 different predicted values of the cross section. The average and 95% confidence gap from the mean from these 500 values are then calculated using t-statistics. Finally, these average values and the 95% confidence gap from the mean are recorded in Output.txt file. 
+Output.txt -- This results file has two columns without any headers. The first column contains the mean value and the second column contains the 95% confidence gap from the mean. The number of the rows are same as the number of compounds in the Make_a_txt_file_after_copying_the_descriptors.txt file.
